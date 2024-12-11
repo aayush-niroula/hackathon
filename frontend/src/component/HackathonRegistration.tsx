@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Clock, Users, Code } from 'lucide-react';
+import axios from 'axios';
 
 const HackathonRegistration = () => {
   // Countdown state
@@ -16,10 +17,10 @@ const HackathonRegistration = () => {
   // Registration modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [teamDetails, setTeamDetails] = useState({
-    teamName: '',
-    teamLeader: '',
-    teamMembers: ['', '', ''],
-    projectIdea: ''
+    name: '',
+    semester:'',
+    email:''
+    
   });
 
   // Countdown timer logic
@@ -41,23 +42,36 @@ const HackathonRegistration = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // api call
+
+  const registerUserapi = async (req,res:any) => {
+    
+    try {
+        const response = await axios.post('http://localhost:8000/api/v1/user/register',teamDetails,{
+            headers:{
+               "Content-Type":"application/json"
+            },
+            withCredentials:true
+            })
+        console.log(response);
+        
+        
+    } catch (error) {
+        console.log(error);
+        
+    }
+    
+  }
+
   // Handle team details input
   const handleInputChange = (e:any, index = -1) => {
     const { name, value } = e.target;
-    
-    if (name === 'teamMembers') {
-      const newTeamMembers = [...teamDetails.teamMembers];
-      newTeamMembers[index] = value;
-      setTeamDetails(prev => ({
-        ...prev,
-        teamMembers: newTeamMembers
-      }));
-    } else {
-      setTeamDetails(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setTeamDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value, // Dynamically updates the corresponding field
+    }));
+
+
   };
 
   // Submit registration
@@ -142,52 +156,41 @@ const HackathonRegistration = () => {
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block mb-2">Team Name</label>
+                <label className="block mb-2">Name</label>
                 <input
                   type="text"
-                  name="teamName"
-                  value={teamDetails.teamName}
+                  name="name"
+                  value={teamDetails.name}
                   onChange={handleInputChange}
                   className="w-full p-3 border rounded-lg"
                   required
                 />
               </div>
               <div>
-                <label className="block mb-2">Team Leader Name</label>
+                <label className="block mb-2">Email</label>
                 <input
                   type="text"
-                  name="teamLeader"
-                  value={teamDetails.teamLeader}
+                  name="email"
+                  value={teamDetails.email}
                   onChange={handleInputChange}
                   className="w-full p-3 border rounded-lg"
                   required
                 />
               </div>
               <div>
-                <label className="block mb-2">Team Members</label>
-                {teamDetails.teamMembers.map((member, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    name="teamMembers"
-                    value={member}
-                    onChange={(e) => handleInputChange(e, index)}
-                    placeholder={`Member ${index + 1} Name`}
-                    className="w-full p-3 border rounded-lg mb-2"
-                  />
-                ))}
-              </div>
-              <div>
-                <label className="block mb-2">Project Idea</label>
-                <textarea
-                  name="projectIdea"
-                  value={teamDetails.projectIdea}
+                <label className="block mb-2">Semester</label>
+                <input
+                  type="text"
+                  name="semester"
+                  value={teamDetails.semester}
                   onChange={handleInputChange}
-                  className="w-full p-3 border rounded-lg h-32"
-                  placeholder="Briefly describe your project concept"
+                  className="w-full p-3 border rounded-lg"
                   required
-                ></textarea>
+                />
               </div>
+            
+       
+            
               <div className="flex space-x-4">
                 <button
                   type="submit"
