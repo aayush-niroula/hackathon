@@ -13,6 +13,7 @@ const registerUser = async (req,res) => {
             })
         }
         const user = await new User({name,email,semester})
+        await user.save()
 
         return res.status(200).json({
             success:true,
@@ -24,4 +25,24 @@ const registerUser = async (req,res) => {
         
     }
 }
-export {registerUser}
+const getAllUsers = async (req,res) => {
+    try {
+    
+        const user = await User.find()
+        console.log(user)
+        if(!user){
+            return res.status(400).json({
+                success:true,
+                message:"Couldnot find any user"
+            })
+        }
+        return res.status(200).json({
+            success:true,
+            user
+        })
+
+    } catch (error) {
+        
+    }
+}
+export {registerUser,getAllUsers}
