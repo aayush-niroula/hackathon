@@ -54,6 +54,7 @@ const HackathonRegistration = () => {
             withCredentials:true
             })
         console.log(response);
+        set
         
         
     } catch (error) {
