@@ -5,7 +5,6 @@ import axios from "axios";
 
 // Custom hook for form validation
 const useFormValidation = () => {
-  const registrationDeadline = "2024-01-15T20:00:00";
   const [errors, setErrors] = useState({
     name: "",
     email: "",
@@ -140,6 +139,8 @@ const RegisterForm: React.FC = () => {
     }
   ], []);
 
+  const deadline = '2024-12-16T20:00:00';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center px-4 py-8">
       <motion.div 
@@ -171,7 +172,7 @@ const RegisterForm: React.FC = () => {
         </div>
 
                 {/* Countdown Timer */}
-                <CountdownTimer deadline={registrationDeadline} />
+                <CountdownTimer deadline={deadline} />
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">

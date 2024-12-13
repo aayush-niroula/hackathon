@@ -3,10 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/store';
 import { fetchUsers } from '../../api-call/userService';
 import { addUsers, removeUser, updateUser } from '../../store/usersSlice';
+import axios from 'axios';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import UpdateModal from './updatePopup';
 
 interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   semester: string;
@@ -34,7 +36,7 @@ export default function AdminPanel() {
     };
 
     loadUsers();
-  }, [dispatch]);
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -56,11 +58,12 @@ export default function AdminPanel() {
                 <th className="py-3 px-4 text-left">Email</th>
                 <th className="py-3 px-4 text-left">Semester</th>
                 <th className="py-3 px-4 text-left">Role</th>
+                <th className="py-3 px-4 text-left">Action</th>
               </tr>
             </thead>
             <tbody className="text-gray-600">
               {users.map((user: User) => (
-                <UserRow key={user.id} user={user} />
+                <UserRow key={user._id} user={user} />
               ))}
             </tbody>
           </table>
@@ -72,41 +75,43 @@ export default function AdminPanel() {
 
 function UserRow({ user }: { user: User }) {
   const dispatch = useDispatch();
+  const [isModalOpen, setModalOpen] = useState(false);
 
-  const handleEdit = (userId: string) => {
-    // Example: Open a form/modal to edit user details
-    console.log('Edit user with ID:', userId);
-    // Implement the actual editing logic (e.g., show a form)
-    const updatedUser = { ...user, name: 'Updated Name' }; // Replace with real form data
-    dispatch(updateUser(updatedUser));  // Dispatch the update action
+  const handleDelete = async (userId: string) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/v1/user/delete/${userId}`);
+      dispatch(removeUser(userId));
+    } catch (err) {
+      console.error('Failed to delete user:', err);
+      alert('Failed to delete user. Please try again later.');
+    }
   };
 
-  const handleDelete = (userId: string) => {
-    // Dispatch the action to remove the user
-    dispatch(removeUser(userId));
-  };
   return (
-    <tr className="border-b border-gray-200 hover:bg-gray-100">
-      <td className="py-3 px-4">{user.name}</td>
-      <td className="py-3 px-4">{user.email}</td>
-      <td className="py-3 px-4">{user.semester}</td>
-      <td className="py-3 px-4">{user.role}</td>
-      <td className="py-3 px-4 text-center">
-        <button
-          onClick={() => handleEdit(user.id)}
-          className="text-blue-500 hover:text-blue-700 mr-3"
-        >
-          <FaEdit />
-        </button>
-        <button
-          onClick={() => handleDelete(user.id)}
-          className="text-red-500 hover:text-red-700"
-        >
-          <FaTrash />
-        </button>
-      </td>
-    </tr>
+    <>
+      <tr className="border-b border-gray-200 hover:bg-gray-100">
+        <td className="py-3 px-4">{user.name}</td>
+        <td className="py-3 px-4">{user.email}</td>
+        <td className="py-3 px-4">{user.semester}</td>
+        <td className="py-3 px-4">{user.role}</td>
+        <td className="py-3 px-4 text-center">
+          <button
+            onClick={() => setModalOpen(true)}
+            className="text-blue-500 hover:text-blue-700 mr-3"
+          >
+            <FaEdit />
+          </button>
+          <button
+            onClick={() => handleDelete(user._id)}
+            className="text-red-500 hover:text-red-700"
+          >
+            <FaTrash />
+          </button>
+        </td>
+      </tr>
+      {isModalOpen && (
+        <UpdateModal user={user} onClose={() => setModalOpen(false)} />
+      )}
+    </>
   );
 }
-
-

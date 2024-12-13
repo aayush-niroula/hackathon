@@ -1,25 +1,19 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-// import Header from './component/Header'
-// import HackathonRegistration from './component/HackathonRegistration'
-// import AdminPanel from './component/AdminPanel'
-import { Provider } from 'react-redux'
-import { store } from '../store/store'
-import RegisterForm from './component/Form'
-function App() {
-  
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import RegisterForm from './component/Final';
+import AdminPanel from './component/AdminPanel';
+import ShuffleTeams from './component/ShuffleTest';
 
+function App() {
   return (
-    <>
-    <Provider store={store}>
- {/* <Header/> */}
- {/* <HackathonRegistration/> */}
- {/* <AdminPanel/> */}
- <RegisterForm/>
- </Provider>
-    </>
-  )
+    <Router>
+      <Routes>
+        {/* Define the route for the RegisterForm component */}
+        <Route path="/" element={<RegisterForm />} />
+        <Route path="/admin/codequest" element={<AdminPanel/>}/>
+        <Route path="/admin/codeshuffle" element={<ShuffleTeams/>}/>
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

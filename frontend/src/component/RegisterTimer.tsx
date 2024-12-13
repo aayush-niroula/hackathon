@@ -1,18 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const CountdownTimer = ({ deadline }) => {
-  const [timeLeft, setTimeLeft] = useState({
+interface CountdownTimerProps {
+  deadline: string; // Expecting a date string
+}
+
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
+const CountdownTimer: React.FC<CountdownTimerProps> = ({ deadline }) => {
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0
   });
-  const [isExpired, setIsExpired] = useState(false);
+  const [isExpired, setIsExpired] = useState<boolean>(false);
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const difference = new Date(deadline) - new Date();
+      const difference = new Date(deadline).getTime() - new Date().getTime();
 
       if (difference > 0) {
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));

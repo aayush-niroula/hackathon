@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   semester: string;
@@ -21,16 +21,13 @@ const usersSlice = createSlice({
   initialState,
   reducers: {
     addUsers: (state, action: PayloadAction<User[]>) => {
-      state.users.push(...action.payload); // Add multiple users
-    },
-    addUser: (state, action: PayloadAction<User>) => {
-      state.users.push(action.payload); // Add a single user
+      state.users = action.payload; // Overwrite users array
     },
     removeUser: (state, action: PayloadAction<string>) => {
-      state.users = state.users.filter(user => user.id !== action.payload);
+      state.users = state.users.filter(user => user._id !== action.payload);
     },
     updateUser: (state, action: PayloadAction<User>) => {
-      const index = state.users.findIndex(user => user.id === action.payload.id);
+      const index = state.users.findIndex(user => user._id === action.payload._id);
       if (index !== -1) {
         state.users[index] = action.payload;
       }
@@ -38,5 +35,5 @@ const usersSlice = createSlice({
   },
 });
 
-export const { addUser, addUsers, removeUser, updateUser } = usersSlice.actions;
+export const { addUsers, removeUser, updateUser } = usersSlice.actions;
 export default usersSlice.reducer;
