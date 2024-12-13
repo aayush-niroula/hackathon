@@ -1,9 +1,11 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import CountdownTimer from "./RegisterTimer";
 import axios from "axios";
 
 // Custom hook for form validation
 const useFormValidation = () => {
+  const registrationDeadline = "2024-01-15T20:00:00";
   const [errors, setErrors] = useState({
     name: "",
     email: "",
@@ -167,6 +169,9 @@ const RegisterForm: React.FC = () => {
             "Participate and unleash your potential!"
           </motion.p>
         </div>
+
+                {/* Countdown Timer */}
+                <CountdownTimer deadline={registrationDeadline} />
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
