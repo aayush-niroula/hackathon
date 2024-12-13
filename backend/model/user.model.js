@@ -14,7 +14,7 @@ const userSchema = mongoose.Schema({
     },
     semester:{
         type:String,
-        enum:['first','third']
+        enum:['First','Third']
     },
     role:{
         type:String,
