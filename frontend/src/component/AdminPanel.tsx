@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/store';
 import { fetchUsers } from '../../api-call/userService';
-import { addUsers } from '../../store/usersSlice';
+import { addUsers, removeUser, updateUser } from '../../store/usersSlice';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 interface User {
   id: string;
@@ -70,12 +71,42 @@ export default function AdminPanel() {
 }
 
 function UserRow({ user }: { user: User }) {
+  const dispatch = useDispatch();
+
+  const handleEdit = (userId: string) => {
+    // Example: Open a form/modal to edit user details
+    console.log('Edit user with ID:', userId);
+    // Implement the actual editing logic (e.g., show a form)
+    const updatedUser = { ...user, name: 'Updated Name' }; // Replace with real form data
+    dispatch(updateUser(updatedUser));  // Dispatch the update action
+  };
+
+  const handleDelete = (userId: string) => {
+    // Dispatch the action to remove the user
+    dispatch(removeUser(userId));
+  };
   return (
     <tr className="border-b border-gray-200 hover:bg-gray-100">
       <td className="py-3 px-4">{user.name}</td>
       <td className="py-3 px-4">{user.email}</td>
       <td className="py-3 px-4">{user.semester}</td>
       <td className="py-3 px-4">{user.role}</td>
+      <td className="py-3 px-4 text-center">
+        <button
+          onClick={() => handleEdit(user.id)}
+          className="text-blue-500 hover:text-blue-700 mr-3"
+        >
+          <FaEdit />
+        </button>
+        <button
+          onClick={() => handleDelete(user.id)}
+          className="text-red-500 hover:text-red-700"
+        >
+          <FaTrash />
+        </button>
+      </td>
     </tr>
   );
 }
+
+
