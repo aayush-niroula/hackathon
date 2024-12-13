@@ -68,6 +68,7 @@ const RegisterForm: React.FC = () => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     setErrors(prev => ({ ...prev, [name]: "", general: "" }));
+    setSuccessMessage("")
   }, [setErrors]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
@@ -82,7 +83,7 @@ const RegisterForm: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      await axios.post("http://localhost:8000/api/v1/user/register", formData, {
+      await axios.post("https://aimscodequest.onrender.com/api/v1/user/register", formData, {
         headers: {
           'Content-Type': 'application/json',
         },

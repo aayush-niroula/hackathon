@@ -1,12 +1,12 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
 import useSound from 'use-sound';
-import {participants} from "../../team.ts";
 import { Shuffle, RefreshCcw, Users, Star, Award } from 'lucide-react';
+import { fetchUsers } from '../../api-call/userService.ts';
 
 type Participant = {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   semester: 'First' | 'Third';
@@ -18,6 +18,23 @@ type Team = {
 };
 
 const ShuffleTeams = () => {
+  const [participants,setParticipants]=useState<Participant[]>([])
+  useEffect(() => {
+
+    const loadUsers = async () => {
+      try {
+        const fetchedUsers = await fetchUsers();
+        setParticipants(fetchedUsers)
+      } catch (err) {
+        console.error('Error loading users:', err);
+      } 
+    };
+    loadUsers();
+  }, []);
+
+  if(!participants){
+    return <h1>loading......</h1>
+  }
     const [teams, setTeams] = useState<Team[]>([]);
     const [isShuffling, setIsShuffling] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
@@ -40,6 +57,8 @@ const ShuffleTeams = () => {
           }
           return array;
         }
+
+        console.log({participants})
   
         // Separate and shuffle participants by semester
         const participantsBySemester = participants.reduce<{
@@ -229,7 +248,7 @@ const ShuffleTeams = () => {
                   <ul className="space-y-2">
                     {team.members.map((member) => (
                       <li 
-                        key={member.id} 
+                        key={member._id} 
                         className="flex justify-between items-center bg-gray-800/50 p-2 rounded-lg"
                       >
                         <span>{member.name}</span>

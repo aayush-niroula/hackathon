@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/store';
 import { fetchUsers } from '../../api-call/userService';
-import { addUsers, removeUser, updateUser } from '../../store/usersSlice';
+import { addUsers, removeUser} from '../../store/usersSlice';
 import axios from 'axios';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import UpdateModal from './updatePopup';
@@ -11,7 +11,7 @@ interface User {
   _id: string;
   name: string;
   email: string;
-  semester: string;
+  semester: 'First' | 'Third';
   role: string;
 }
 
@@ -79,7 +79,7 @@ function UserRow({ user }: { user: User }) {
 
   const handleDelete = async (userId: string) => {
     try {
-      await axios.delete(`http://localhost:8000/api/v1/user/delete/${userId}`);
+      await axios.delete(`https://aimscodequest.onrender.com/api/v1/user/delete/${userId}`);
       dispatch(removeUser(userId));
     } catch (err) {
       console.error('Failed to delete user:', err);

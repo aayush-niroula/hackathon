@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api/v1/user/get'; // Replace with your actual API URL
+const API_URL = 'https://aimscodequest.onrender.com/api/v1/user/get'; // Replace with your actual API URL
 
 interface User {
   _id: string;
   name: string;
   email: string;
-  semester: string;
+  semester: 'First' | 'Third';
   role: string;
 }
 

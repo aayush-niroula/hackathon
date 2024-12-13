@@ -154,7 +154,7 @@ const RegisterForm: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:8000/api/v1/user/register", {
+      const response = await fetch("https://aimscodequest.onrender.com/api/v1/user/register", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -189,7 +189,6 @@ const RegisterForm: React.FC = () => {
           day: 'numeric', 
           hour: '2-digit', 
           minute: '2-digit', 
-          timeZoneName: 'short' 
         };
         const formattedDate = deadlineDate.toLocaleString('en-US', options);
         return `Register until ${formattedDate}`;
@@ -333,8 +332,8 @@ const RegisterForm: React.FC = () => {
                 disabled={isSubmitting}
               >
                 <option value="">Select Your Semester</option>
-                <option value="first">1st Semester</option>
-                <option value="third">3rd Semester</option>
+                <option value="First">1st Semester</option>
+                <option value="Third">3rd Semester</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
                 <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

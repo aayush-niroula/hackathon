@@ -4,7 +4,7 @@ interface User {
   _id: string;
   name: string;
   email: string;
-  semester: string;
+  semester: 'First' | 'Third';
   role: string;
 }
 

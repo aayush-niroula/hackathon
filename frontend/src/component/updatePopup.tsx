@@ -4,12 +4,12 @@ import { updateUser } from '../../store/usersSlice';
 import axios from 'axios';
 
 interface User {
-   _id: string;
-    name: string;
-    email: string;
-    semester: string;
-    role: string;
-  }
+  _id: string;
+  name: string;
+  email: string;
+  semester: "First" | "Third";
+  role: string;
+}
 
 interface UpdateModalProps {
   user: User;
@@ -22,7 +22,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ user, onClose }) => {
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -31,7 +31,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ user, onClose }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.put(`http://localhost:8000/api/v1/user/edit/${user._id}`, formData);
+      const response = await axios.put(`https://aimscodequest.onrender.com/api/v1/user/edit/${user._id}`, formData);
       dispatch(updateUser(response.data)); // Update state with the API response
       onClose();
     } catch (err) {
@@ -68,23 +68,27 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ user, onClose }) => {
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium">Semester</label>
-          <input
-            type="text"
+          <select
             name="semester"
             value={formData.semester}
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded"
-          />
+          >
+            <option value="First">First</option>
+            <option value="Third">Third</option>
+          </select>
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium">Role</label>
-          <input
-            type="text"
+          <select
             name="role"
             value={formData.role}
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded"
-          />
+          >
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+          </select>
         </div>
         <div className="flex justify-end">
           <button

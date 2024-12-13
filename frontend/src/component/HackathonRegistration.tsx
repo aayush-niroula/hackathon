@@ -47,7 +47,7 @@ const HackathonRegistration = () => {
   const registerUserapi = async (req,res:any) => {
     
     try {
-        const response = await axios.post('http://localhost:8000/api/v1/user/register',teamDetails,{
+        const response = await axios.post('https://aimscodequest.onrender.com/api/v1/user/register',teamDetails,{
             headers:{
                "Content-Type":"application/json"
             },
