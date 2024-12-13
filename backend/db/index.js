@@ -6,3 +6,12 @@ export const connectToDb=()=>{
         
     })
 }
+export const disconnectFromDb = async () => {
+    try {
+        await mongoose.connection.close();
+        console.log("Database connection closed successfully");
+    } catch (error) {
+        console.error("Error disconnecting from the database:", error);
+        throw error;
+    }
+};
