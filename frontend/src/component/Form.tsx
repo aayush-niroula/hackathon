@@ -83,7 +83,7 @@ const RegisterForm: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      await axios.post("https://aimscodequest.onrender.com/api/v1/user/register", formData, {
+      await axios.post("http://localhost:8000/api/v1/user/register", formData, {
         headers: {
           'Content-Type': 'application/json',
         },

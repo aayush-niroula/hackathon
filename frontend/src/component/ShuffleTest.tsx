@@ -32,9 +32,6 @@ const ShuffleTeams = () => {
     loadUsers();
   }, []);
 
-  if(!participants){
-    return <h1>loading......</h1>
-  }
     const [teams, setTeams] = useState<Team[]>([]);
     const [isShuffling, setIsShuffling] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
@@ -42,7 +39,6 @@ const ShuffleTeams = () => {
   
     const [playShuffle] = useSound('/sound/shuffle.mp3');
     const [playSuccess] = useSound('/sound/success.mp3');
-  
     const shuffleTeams = () => {
       playShuffle();
       setIsShuffling(true);
@@ -155,7 +151,7 @@ const ShuffleTeams = () => {
       const thirdSemesterCount = participants.filter((p) => p.semester === 'Third').length;
   
       return { totalParticipants, firstSemesterCount, thirdSemesterCount };
-    }, []);
+    }, [participants]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-10 flex flex-col items-center overflow-hidden">
