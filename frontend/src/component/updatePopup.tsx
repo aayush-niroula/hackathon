@@ -31,7 +31,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ user, onClose }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.put(`https://aimscodequest.onrender.com/api/v1/user/edit/${user._id}`, formData);
+      const response = await axios.put(`http://localhost:8000/api/v1/user/edit/${user._id}`, formData);
       dispatch(updateUser(response.data)); // Update state with the API response
       onClose();
     } catch (err) {

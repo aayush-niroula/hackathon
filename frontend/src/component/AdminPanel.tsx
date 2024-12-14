@@ -79,7 +79,7 @@ function UserRow({ user }: { user: User }) {
 
   const handleDelete = async (userId: string) => {
     try {
-      await axios.delete(`https://aimscodequest.onrender.com/api/v1/user/delete/${userId}`);
+      await axios.delete(`http://localhost:8000/api/v1/user/delete/${userId}`);
       dispatch(removeUser(userId));
     } catch (err) {
       console.error('Failed to delete user:', err);
