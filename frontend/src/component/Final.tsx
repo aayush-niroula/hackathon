@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 
 // Inline CountdownTimer component
 const CountdownTimer: React.FC<{ deadline: string }> = ({ deadline }) => {
@@ -154,7 +155,7 @@ const RegisterForm: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:8000/api/v1/user/register", {
+      const response = await fetch("https://aimscodequest.onrender.com/api/v1/user/register", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,7 +167,7 @@ const RegisterForm: React.FC = () => {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Registration failed');
       }
-      
+      toast.success("Registration successful! Thank you for participating.")
       setSuccessMessage("Registration successful! Thank you for participating.");
       setFormData({ name: "", email: "", semester: "" });
     } catch (error: any) {

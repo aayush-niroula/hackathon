@@ -1,19 +1,27 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RegisterForm from './component/Final';
 import AdminPanel from './component/AdminPanel';
-import ShuffleTeams from './component/ShuffleTest';
 import DivideTeams from './component/Divider';
-import Teams from './component/Shu';
+import Timer from './component/Demo';
+import Panel from './component/Admin';
+import TeamCard from './component/ViewTeam';
+import ViewUsersPanel from './component/ViewUser';
+import ViewTeam from './component/AllTeams';
+import TeamManagement from './component/Teammanagement';
+
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Define the route for the RegisterForm component */}
         <Route path="/" element={<RegisterForm />} />
         <Route path="/admin/codequest" element={<AdminPanel/>}/>
-        <Route path="/admin/codeshuffle" element={<ShuffleTeams/>}/>
         <Route path="/admin/divide" element={<DivideTeams/>}/>
-        <Route path="/admin/shuffle" element={<Teams/>}/>
+        <Route path="/admin/timer" element={<Timer/>}/>
+        <Route path="/admin/panel" element={<Panel/>}/>
+        <Route path="/admin/viewteam" element={<TeamCard/>}/>
+        <Route path="/admin/viewuser" element={<ViewUsersPanel/>}/>
+        <Route path="/admin/viewallteams" element={<ViewTeam/>}/>
+        <Route path="/admin/manageteams" element={<TeamManagement/>}/>
       </Routes>
     </Router>
   );

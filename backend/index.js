@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import userRoutes from './routes/user.routes.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import teamRoutes from './routes/team.routes.js';
 
 const PORT = 8000;
 dotenv.config({});
@@ -15,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://aimscodequests.vercel.app",
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -60,6 +61,7 @@ process.on('SIGTERM', gracefulShutdown);
 
 // API routes
 app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/team',teamRoutes)
 
 // Start the server
 startServer();

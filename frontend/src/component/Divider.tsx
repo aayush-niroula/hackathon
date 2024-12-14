@@ -4,6 +4,7 @@ import Confetti from 'react-confetti';
 import useSound from 'use-sound';
 import { Shuffle, RefreshCcw, Users, Star, Award } from 'lucide-react';
 import { fetchUsers } from '../../api-call/userService.ts';
+import axios from 'axios';
 
 type Participant = {
   _id: string;
@@ -22,7 +23,7 @@ const DivideTeams = () => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [isShuffling, setIsShuffling] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [currentShufflingParticipants, setCurrentShufflingParticipants] = useState<Participant[]>([]);
+  const [shufflingParticipants, setShufflingParticipants] = useState<Participant[]>([]);
 
   const teamsRef = useRef<HTMLDivElement>(null);
   const [playShuffle] = useSound('/sound/shuffle.mp3');
@@ -46,89 +47,116 @@ const DivideTeams = () => {
     setIsShuffling(true);
     setShowConfetti(false);
 
-    // Animate the participants for shuffling
-    const animatedParticipants = [...participants];
-    setCurrentShufflingParticipants(animatedParticipants);
+    // Create a copy of participants for shuffling animation
+    const shufflingCopy = [...participants];
+    setShufflingParticipants(shufflingCopy);
 
-    setTimeout(() => {
-      function shuffleArray<T>(array: T[]): T[] {
-        for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-      }
+    // Simulate realistic shuffling with multiple stages
+    const shufflingStages = [
+      { duration: 500, intensity: 0.2 },
+      { duration: 800, intensity: 0.4 },
+      { duration: 1200, intensity: 0.6 },
+      { duration: 1500, intensity: 0.8 }
+    ];
 
-      // Separate participants by semester
-      const participantsBySemester = participants.reduce<{
-        First: Participant[];
-        Third: Participant[];
-      }>((acc, participant) => {
-        acc[participant.semester].push(participant);
-        return acc;
-      }, { First: [], Third: [] });
+    let currentStage = 0;
 
-      const firstSemester = shuffleArray(participantsBySemester.First);
-      const thirdSemester = shuffleArray(participantsBySemester.Third);
-
-      const shuffledTeams: Team[] = [];
-      const unassignedParticipants: Participant[] = [];
-
-      // Logic for forming teams
-      const formTeams = () => {
-        shuffledTeams.length = 0;
-        const remainingParticipants: Participant[] = [];
-
-        const totalFirstSemester = firstSemester.length;
-        const totalThirdSemester = thirdSemester.length;
-
-        // Step 1: Form teams of 4 members (balanced with 2 First and 2 Third per team)
-        let maxTeams = Math.min(
-          Math.floor(totalFirstSemester / 2), 
-          Math.floor(totalThirdSemester / 2)
+    const animateShuffling = () => {
+      if (currentStage < shufflingStages.length) {
+        const stage = shufflingStages[currentStage];
+        
+        // Shuffle participants with varying intensity
+        const shuffledParticipants = shufflingCopy.sort(() => 
+          Math.random() < stage.intensity ? -1 : 1
         );
+        
+        setShufflingParticipants([...shuffledParticipants]);
+        
+        currentStage++;
+        setTimeout(animateShuffling, stage.duration);
+      } else {
+        // Final team formation
+        setTimeout(formFinalTeams, 500);
+      }
+    };
 
-        // Create balanced teams of 4 members (2 First, 2 Third per team)
-        for (let i = 0; i < maxTeams; i++) {
-          shuffledTeams.push({
-            id: i + 1,
-            members: [
-              firstSemester.pop()!,
-              firstSemester.pop()!,
-              thirdSemester.pop()!,
-              thirdSemester.pop()!,
-            ],
-          });
-        }
+    // Start the shuffling animation
+    setTimeout(animateShuffling, 300);
+  };
 
-        remainingParticipants.push(...firstSemester, ...thirdSemester);
+  const formFinalTeams = () => {
+    function shuffleArray<T>(array: T[]): T[] {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
 
-        // Step 2: Distribute remaining participants into teams of 4
-        while (remainingParticipants.length > 0) {
-          const participant = remainingParticipants.pop()!;
+    // Separate participants by semester
+    const participantsBySemester = participants.reduce<{
+      First: Participant[];
+      Third: Participant[];
+    }>((acc, participant) => {
+      acc[participant.semester].push(participant);
+      return acc;
+    }, { First: [], Third: [] });
 
-          const teamWithFewestMembers = shuffledTeams.sort(
-            (a, b) => a.members.length - b.members.length
-          )[0];
+    const firstSemester = shuffleArray(participantsBySemester.First);
+    const thirdSemester = shuffleArray(participantsBySemester.Third);
 
-          if (teamWithFewestMembers.members.length < 4) {
-            teamWithFewestMembers.members.push(participant);
-          } else {
-            shuffledTeams.push({
-              id: shuffledTeams.length + 1,
-              members: [participant],
-            });
-          }
-        }
-      };
+    const shuffledTeams: Team[] = [];
+    const remainingParticipants: Participant[] = [];
 
-      formTeams();
-      setTeams(shuffledTeams);
-      playSuccess();
-      setShowConfetti(true);
-      setIsShuffling(false);
-      teamsRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 2000);
+    // Team formation logic (same as before)
+    const totalFirstSemester = firstSemester.length;
+    const totalThirdSemester = thirdSemester.length;
+
+    let maxTeams = Math.min(
+      Math.floor(totalFirstSemester / 2), 
+      Math.floor(totalThirdSemester / 2)
+    );
+
+    // Create balanced teams of 4 members (2 First, 2 Third per team)
+    for (let i = 0; i < maxTeams; i++) {
+      shuffledTeams.push({
+        id: i + 1,
+        members: [
+          firstSemester.pop()!,
+          firstSemester.pop()!,
+          thirdSemester.pop()!,
+          thirdSemester.pop()!,
+        ],
+      });
+    }
+
+    remainingParticipants.push(...firstSemester, ...thirdSemester);
+
+    // Distribute remaining participants
+    while (remainingParticipants.length > 0) {
+      const participant = remainingParticipants.pop()!;
+
+      const teamWithFewestMembers = shuffledTeams.sort(
+        (a, b) => a.members.length - b.members.length
+      )[0];
+
+      if (teamWithFewestMembers.members.length < 4) {
+        teamWithFewestMembers.members.push(participant);
+      } else {
+        shuffledTeams.push({
+          id: shuffledTeams.length + 1,
+          members: [participant],
+        });
+      }
+    }
+
+    // Reset shuffling state and show final teams
+    setTeams(shuffledTeams);
+    setShufflingParticipants([]);
+    playSuccess();
+    setShowConfetti(true);
+    setIsShuffling(false);
+    teamsRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const teamStats = useMemo(() => {
@@ -138,6 +166,29 @@ const DivideTeams = () => {
 
     return { totalParticipants, firstSemesterCount, thirdSemesterCount };
   }, [participants]);
+
+  const saveTeams = async () => {
+    try {
+      // Prepare the teams data to send in the request
+      const teamsToSave = teams.map(team => ({
+        id: team.id,
+        members: team.members.map(member => ({
+          name: member.name,
+          email: member.email,
+          semester: member.semester
+        }))
+      }));
+  
+      // Make the Axios request to save the teams
+      await axios.post('https://aimscodequest.onrender.com/api/v1/team/save', { teams: teamsToSave });
+  
+      // Optionally, show a success message or handle the response
+      alert('Teams saved successfully!');
+    } catch (error) {
+      console.error('Error saving teams:', error);
+      alert('Failed to save teams');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 p-10 flex flex-col items-center overflow-hidden">
@@ -155,6 +206,7 @@ const DivideTeams = () => {
           <Award className="text-green-500 w-12 h-12" />
         </h1>
 
+        {/* Participant Overview Section (unchanged) */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -180,6 +232,7 @@ const DivideTeams = () => {
           </div>
         </motion.div>
 
+        {/* Shuffle Button (unchanged) */}
         <div className="flex justify-center mb-8">
           <motion.button
             onClick={shuffleTeams}
@@ -208,25 +261,48 @@ const DivideTeams = () => {
         </div>
 
         {/* Shuffling Animation */}
-        {isShuffling && (
-          <motion.div
-            className="flex justify-center items-center space-x-4 mb-8"
+        {isShuffling && shufflingParticipants.length > 0 && (
+          <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8"
           >
-            <motion.div
-              animate={{ rotate: [0, 360] }}
-              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-              className="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center"
-            >
-              <Shuffle className="w-8 h-8 text-white animate-spin" />
-            </motion.div>
-            <p className="text-xl font-semibold text-gray-700">Shuffling...</p>
+            {shufflingParticipants.map((participant, index) => (
+              <motion.div
+                key={participant._id}
+                initial={{ 
+                  opacity: 0, 
+                  x: Math.random() * 100 - 50, 
+                  y: Math.random() * 100 - 50,
+                  rotate: Math.random() * 20 - 10
+                }}
+                animate={{ 
+                  opacity: 1, 
+                  x: 0, 
+                  y: 0,
+                  rotate: [
+                    Math.random() * 10 - 5, 
+                    Math.random() * 10 - 5, 
+                    0
+                  ]
+                }}
+                transition={{ 
+                  duration: 0.5,
+                  delay: index * 0.05,
+                  type: "spring",
+                  stiffness: 300
+                }}
+                className="bg-white shadow-md rounded-lg p-3 text-center"
+              >
+                <p className="font-semibold">{participant.name}</p>
+                <p className="text-sm text-gray-500">{participant.semester}</p>
+              </motion.div>
+            ))}
           </motion.div>
         )}
 
-        {/* Display Teams */}
+        {/* Display Teams (unchanged) */}
         {teams.length > 0 && (
           <AnimatePresence>
             <motion.div 
@@ -263,6 +339,20 @@ const DivideTeams = () => {
             </motion.div>
           </AnimatePresence>
         )}
+        {/* Save Teams Button */}
+{teams.length > 0 && (
+  <div className="mt-8 flex justify-center">
+    <motion.button
+      onClick={saveTeams}
+      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.05 }}
+      className="px-6 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-all duration-300 ease-in-out"
+    >
+      Save Teams
+    </motion.button>
+  </div>
+)}
+
       </motion.div>
     </div>
   );
