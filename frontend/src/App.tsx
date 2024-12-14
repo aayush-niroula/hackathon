@@ -4,7 +4,6 @@ import AdminPanel from './component/AdminPanel';
 import DivideTeams from './component/Divider';
 import Timer from './component/Demo';
 import Panel from './component/Admin';
-import TeamCard from './component/ViewTeam';
 import ViewUsersPanel from './component/ViewUser';
 import ViewTeam from './component/AllTeams';
 import TeamManagement from './component/Teammanagement';
@@ -18,7 +17,6 @@ function App() {
         <Route path="/admin/divide" element={<DivideTeams/>}/>
         <Route path="/admin/timer" element={<Timer/>}/>
         <Route path="/admin/panel" element={<Panel/>}/>
-        <Route path="/admin/viewteam" element={<TeamCard/>}/>
         <Route path="/admin/viewuser" element={<ViewUsersPanel/>}/>
         <Route path="/admin/viewallteams" element={<ViewTeam/>}/>
         <Route path="/admin/manageteams" element={<TeamManagement/>}/>
