@@ -3,7 +3,6 @@ import { User } from "../model/user.model.js";
 const registerUser = async (req,res) => {
     try {
         const {name,email,semester}=req.body;
-        console.log(req.body);
         
 
         if(!email,!name,!semester){
