@@ -26,7 +26,8 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.0.2",
     "react-spring": "^9.7.5",
-    "use-sound": "^4.0.3"
+    "use-sound": "^4.0.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
