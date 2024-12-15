@@ -66,7 +66,7 @@ const Teams = () => {
       const thirdSemester = shuffleArray(participantsBySemester.Third);
 
       const shuffledTeams: Team[] = [];
-      const unassignedParticipants: Participant[] = [];
+      // const unassignedParticipants: Participant[] = [];
 
       // Logic for forming teams
       const formTeams = () => {
