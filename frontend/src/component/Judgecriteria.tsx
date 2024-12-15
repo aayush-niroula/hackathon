@@ -1,4 +1,4 @@
-import { Award, Star, CheckCircle, Users, Layout, Mic } from "lucide-react";
+import { Star, CheckCircle, Users, Layout, Mic } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Judgecriteria = () => {
@@ -47,7 +47,7 @@ const Judgecriteria = () => {
       title: "Q&A",
       icon: <CheckCircle className="text-green-500" />,
       maxScore: 5,
-      description: "Evaluate the team’s ability to answer questions clearly and demonstrate depth of knowledge.",
+      description: "Evaluate the team's ability to answer questions clearly and demonstrate depth of knowledge.",
       subCriteria: [
         "Clarity in responses",
         "Depth of knowledge",
@@ -77,26 +77,32 @@ const Judgecriteria = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <motion.h1
-        className="text-2xl font-bold mb-6 text-center flex items-center justify-center"
-        initial={{ scale: 0.8 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <Award className="mr-3 text-yellow-500" />
-        Hackathon Project Judging Criteria
-      </motion.h1>
+      {/* Header with Logo and Title */}
+      <div className="flex items-center justify-center mb-8 space-x-4">
+        <img
+          src="/images.png" 
+          alt="AIMS CODE QUEST 2.0 Logo" 
+          width={80} 
+          height={80} 
+          className="rounded-full shadow-md"
+        />
+        <h1 className="text-3xl font-bold text-gray-800">
+          AIMS CODE QUEST 2.0
+        </h1>
+      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        {criteriaDetails.map((criteria, _index) => (
-          <motion.div
+      <div className="grid md:grid-cols-2 gap-6">
+        {criteriaDetails.map((criteria) => (
+          <div
             key={criteria.key}
-            className="border rounded-lg p-4 hover:shadow-md transition-shadow"
-            whileHover={{ scale: 1.05 }}
+            className="border rounded-lg p-4 transition-shadow hover:shadow-md"
           >
             <div className="flex items-center mb-3">
               {criteria.icon}
               <h2 className="ml-3 font-semibold text-lg">{criteria.title}</h2>
+              <span className="ml-auto text-gray-500 font-bold">
+                {criteria.maxScore}/5
+              </span>
             </div>
             <p className="text-sm text-gray-600 mb-3">{criteria.description}</p>
 
@@ -104,37 +110,20 @@ const Judgecriteria = () => {
               <h3 className="font-medium mb-2">Sub-Criteria:</h3>
               <ul className="list-disc list-inside text-sm text-gray-700">
                 {criteria.subCriteria.map((sub, idx) => (
-                  <motion.li key={idx} initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: idx * 0.1 }}>
+                  <li key={idx} className="py-1">
                     {sub}
-                  </motion.li>
+                  </li>
                 ))}
               </ul>
             </div>
-
-            <div className="flex items-center">
-              <span className="ml-2 text-gray-500">/ {criteria.maxScore}</span>
-            </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      <motion.div
-        className="mt-6 bg-gray-100 rounded-lg p-4 text-center"
-        initial={{ scale: 0.8 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div className="mt-6 bg-gray-100 rounded-lg p-4 text-center">
         <h3 className="text-xl font-bold mb-3">Total Score</h3>
-        <div className="text-2xl font-semibold">25</div>
-        <div className="mt-2 h-2 bg-blue-200 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-blue-500"
-            initial={{ width: 0 }}
-            animate={{ width: "100%" }}
-            transition={{ duration: 1.5 }}
-          ></motion.div>
-        </div>
-      </motion.div>
+        <div className="text-2xl font-semibold text-gray-800">25</div>
+      </div>
     </motion.div>
   );
 };
