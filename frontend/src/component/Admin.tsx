@@ -1,123 +1,152 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Code, Users, Clock, Grid, FileText, Settings, Award} from 'lucide-react';  // Importing icons
+import { 
+  Code, Users, Clock, Grid, FileText, Settings, Award, ChevronRight 
+} from 'lucide-react';
 import eventLogo from '../../images/images.png';
 
-const buttonVariants = {
-  hover: {
-    scale: 1.05,
-    boxShadow: '0px 8px 15px rgba(0, 0, 0, 0.2)',
-    transition: { duration: 0.3, yoyo: Infinity },
+const ADMIN_ROUTES = [
+  { 
+    title: 'Manage CodeQuest', 
+    path: '/admin/codequest', 
+    icon: Code,
+    description: 'Manage Participants',
+    bgColor: 'bg-blue-600',
   },
-  tap: {
-    scale: 0.95,
+  { 
+    title: 'Divide Teams', 
+    path: '/admin/divide', 
+    icon: Grid,
+    description: 'Divide Teams',
+    bgColor: 'bg-green-600',
   },
-};
+  { 
+    title: 'Reveal Teams', 
+    path: '/admin/revealteams', 
+    icon: Grid,
+    description: 'Split Teams',
+    bgColor: 'bg-slate-950',
+  },
+  { 
+    title: 'Timer Control', 
+    path: '/admin/timer', 
+    icon: Clock,
+    description: 'Timer',
+    bgColor: 'bg-purple-600',
+  },
+  { 
+    title: 'View Users', 
+    path: '/admin/viewuser', 
+    icon: Users,
+    description: 'View Participant',
+    bgColor: 'bg-indigo-600',
+  },
+  { 
+    title: 'View All Teams', 
+    path: '/admin/viewallteams', 
+    icon: Grid,
+    description: 'View Teams',
+    bgColor: 'bg-teal-600',
+  },
+  { 
+    title: 'Manage Teams', 
+    path: '/admin/manageteams', 
+    icon: Settings,
+    description: 'Manage Teams',
+    bgColor: 'bg-rose-600',
+  },
+  { 
+    title: 'Judge Criteria', 
+    path: '/admin/judgecriteria', 
+    icon: FileText,
+    description: 'View Marking',
+    bgColor: 'bg-amber-600',
+  },
+  { 
+    title: 'Hackathon Judging', 
+    path: '/admin/scoretable', 
+    icon: Award,
+    description: 'Manage Score',
+    bgColor: 'bg-cyan-600',
+  },
+];
 
 const Panel: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleNavigate = (path: string) => {
-    navigate(path);
-  };
-
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: '#0d1117',
-        color: '#ffffff',
-        fontFamily: 'Arial, sans-serif',
-        padding: '0 20px',
-      }}
-    >
-      {/* Event Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -30 }}
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 space-y-8">
+      {/* Header */}
+      <motion.div 
+        initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          marginBottom: '2rem',
-          justifyContent: 'center',
-          flexDirection: 'column',
-        }}
+        transition={{ duration: 0.8 }}
+        className="flex flex-col items-center text-center"
       >
-        <img src={eventLogo} alt="Event Logo" style={{ width: '80px', marginBottom: '1rem' }} />
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', textAlign: 'center' }}>
-          Aims Code Quest 2.0 - Admin Panel
+        <img 
+          src={eventLogo} 
+          alt="Event Logo" 
+          className="w-24 h-24 mb-4 rounded-full shadow-lg"
+        />
+        <h1 className="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+          Aims Code Quest 2.0
         </h1>
+        <p className="text-xl text-gray-400 mt-2">
+          Admin Control Center
+        </p>
       </motion.div>
 
-      {/* Buttons Section (Using Cards for Navigation) */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-          gap: '1.5rem',
-          width: '100%',
-          maxWidth: '900px',
-        }}
-      >
-        {/* Card for each section */}
-        {[
-          { title: 'Manage CodeQuest', path: '/admin/codequest', icon: <Code size={24} /> },
-          { title: 'Divide Teams', path: '/admin/divide', icon: <Grid size={24} /> },
-          { title: 'Timer Control', path: '/admin/timer', icon: <Clock size={24} /> },
-          { title: 'View Users', path: '/admin/viewuser', icon: <Users size={24} /> },
-          { title: 'View All Teams', path: '/admin/viewallteams', icon: <Grid size={24} /> },
-          { title: 'Manage Teams', path: '/admin/manageteams', icon: <Settings size={24} /> },
-          { title: 'Judge Criteria', path: '/admin/judgecriteria', icon: <FileText size={24} /> },
-          { title: 'Hackathon Judging', path: '/admin/scoretable', icon: <Award size={24} /> },
-        ].map(({ title, path, icon }, index) => (
+      {/* Admin Routes Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
+        {ADMIN_ROUTES.map(({ title, path, icon: Icon, description, bgColor }, index) => (
           <motion.div
             key={index}
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
-            onClick={() => handleNavigate(path)}
-            style={cardStyle}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ 
+              delay: index * 0.1, 
+              type: 'spring', 
+              stiffness: 300 
+            }}
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
+            }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate(path)}
+            className={`
+              ${bgColor} 
+              rounded-2xl p-6 cursor-pointer 
+              transform transition-all duration-300 
+              hover:shadow-2xl group
+              flex flex-col justify-between
+              relative overflow-hidden
+            `}
           >
-            <div style={iconTextContainerStyle}>
-              {icon}
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', textAlign: 'center', color: '#333', marginLeft: '1rem' }}>
+            <div className="flex justify-between items-center mb-4">
+              <Icon 
+                className="text-white opacity-80 group-hover:opacity-100 transition-opacity" 
+                size={32} 
+              />
+              <ChevronRight 
+                className="text-white opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4" 
+                size={24} 
+              />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2 text-white">
                 {title}
               </h3>
+              <p className="text-sm text-white text-opacity-70">
+                {description}
+              </p>
             </div>
           </motion.div>
         ))}
       </div>
     </div>
   );
-};
-
-const cardStyle: React.CSSProperties = {
-  backgroundColor: '#58a6ff',
-  borderRadius: '12px',
-  padding: '2rem',
-  cursor: 'pointer',
-  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-  minHeight: '120px',
-  color: '#ffffff',
-  textAlign: 'center',
-  flexDirection: 'column',
-};
-
-const iconTextContainerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexDirection: 'row',
 };
 
 export default Panel;

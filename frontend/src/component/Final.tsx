@@ -11,6 +11,7 @@ const CountdownTimer: React.FC<{ deadline: string }> = ({ deadline }) => {
     seconds: 0
   });
   const [isExpired, setIsExpired] = useState(false);
+  const [isUrgent, setIsUrgent] = useState(false);
 
   useEffect(() => {
     const calculateTimeLeft = () => {
@@ -21,6 +22,10 @@ const CountdownTimer: React.FC<{ deadline: string }> = ({ deadline }) => {
         const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
         const minutes = Math.floor((difference / 1000 / 60) % 60);
         const seconds = Math.floor((difference / 1000) % 60);
+
+        // Check for urgency (less than 4 hours remaining)
+        const totalHoursLeft = days * 24 + hours;
+        setIsUrgent(totalHoursLeft < 4);
 
         setTimeLeft({ days, hours, minutes, seconds });
         setIsExpired(false);
@@ -40,35 +45,70 @@ const CountdownTimer: React.FC<{ deadline: string }> = ({ deadline }) => {
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="text-center bg-red-100 text-red-700 p-4 rounded-lg mb-6"
+        className="text-center bg-red-500 text-white p-6 rounded-lg mb-6 animate-pulse"
       >
-        Registration is now closed
+        <div className="text-2xl font-bold">Registration Closed</div>
+        <div className="text-sm mt-2">Time has expired. You can no longer register.</div>
       </motion.div>
     );
   }
 
+  // Determine which time units to display
+  const displayUnits = timeLeft.days > 0 
+    ? ['days', 'hours', 'minutes', 'seconds'] 
+    : ['hours', 'minutes', 'seconds'];
+
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      className="flex justify-center space-x-4 mb-6"
-    >
-      {Object.entries(timeLeft).map(([unit, value]) => (
-        <div
-          key={unit}
-          className="bg-blue-100 p-3 rounded-lg shadow-md w-20 text-center"
+    <AnimatePresence>
+      {isUrgent && (
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 text-center"
         >
-          <div className="text-3xl font-bold text-blue-700">
-            {value.toString().padStart(2, '0')}
-          </div>
-          <div className="text-xs text-blue-600 uppercase">
-            {unit}
-          </div>
-        </div>
-      ))}
-    </motion.div>
+          <div className="font-bold">⏰ Hurry! Registration is about to close</div>
+          <div className="text-sm mt-1">Don't miss your chance to participate!</div>
+        </motion.div>
+      )}
+      
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        className={`flex justify-center space-x-4 mb-6 ${isUrgent ? 'animate-pulse' : ''}`}
+      >
+        {displayUnits.map((unit) => (
+          <motion.div
+            key={unit}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.05 }}
+            className={`
+              p-3 rounded-lg shadow-lg w-20 text-center transition-all duration-300
+              ${isUrgent 
+                ? 'bg-red-100 border-2 border-red-300 animate-pulse' 
+                : 'bg-blue-100 border border-blue-200'}
+            `}
+          >
+            <div className={`
+              text-3xl font-bold 
+              ${isUrgent ? 'text-red-700' : 'text-blue-700'}
+            `}>
+              {timeLeft[unit as keyof typeof timeLeft].toString().padStart(2, '0')}
+            </div>
+            <div className={`
+              text-xs uppercase 
+              ${isUrgent ? 'text-red-600' : 'text-blue-600'}
+            `}>
+              {unit}
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </AnimatePresence>
   );
 };
+
 
 // Custom hook for form validation
 const useFormValidation = () => {

@@ -9,7 +9,9 @@ import ViewTeam from './component/AllTeams';
 import TeamManagement from './component/Teammanagement';
 import Judgecriteria from './component/Judgecriteria';
 import HackathonJudgingComponent from './component/Scoretable';
+import RevealTeams from './component/FinalDivder';
 import DivideTeams from './component/FInalTeamForm';
+// DivideTeams
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
         <Route path="/admin/manageteams" element={<TeamManagement/>}/>
         <Route path="/admin/judgecriteria" element={<Judgecriteria/>}/>
         <Route path="/admin/scoretable" element={<HackathonJudgingComponent/>}/>
+        <Route path="/admin/revealteams" element={<RevealTeams/>}/>
       </Routes>
     </Router>
   );
