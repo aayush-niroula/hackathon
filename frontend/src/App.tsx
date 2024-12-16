@@ -11,6 +11,8 @@ import Judgecriteria from './component/Judgecriteria';
 import HackathonJudgingComponent from './component/Scoretable';
 import RevealTeams from './component/FinalDivder';
 import DivideTeams from './component/FInalTeamForm';
+import EnhancedRevealTeams from './component/EnhancedReveal';
+// EnhancedRevealTeams
 // DivideTeams
 
 function App() {
@@ -28,6 +30,7 @@ function App() {
         <Route path="/admin/judgecriteria" element={<Judgecriteria/>}/>
         <Route path="/admin/scoretable" element={<HackathonJudgingComponent/>}/>
         <Route path="/admin/revealteams" element={<RevealTeams/>}/>
+        <Route path="/admin/enhancedrevealteams" element={<EnhancedRevealTeams/>}/>
       </Routes>
     </Router>
   );
