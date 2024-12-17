@@ -29,6 +29,13 @@ const ADMIN_ROUTES = [
     bgColor: 'bg-slate-950',
   },
   { 
+    title: 'Squad Reveal', 
+    path: '/admin/enhancedrevealteams', 
+    icon: Grid,
+    description: 'Split Teams',
+    bgColor: 'bg-gray-950',
+  },
+  { 
     title: 'Timer Control', 
     path: '/admin/timer', 
     icon: Clock,
