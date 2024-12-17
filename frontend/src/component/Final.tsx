@@ -218,7 +218,9 @@ const RegisterForm: React.FC = () => {
     }
   }, [formData, validateForm, setErrors]);
 
-  const deadline = '2024-12-17T20:00:00';
+  const deadline = "2024-12-17T20:00:00"
+  const deadlineTimestamp = new Date(deadline).getTime();  // Convert deadline to a timestamp
+const now = new Date().getTime();  // Get current time in timestamp
 
     // New function to get a user-friendly deadline message
     const getDeadlineMessage = () => {
@@ -388,11 +390,11 @@ const RegisterForm: React.FC = () => {
           </motion.div>
 
           {/* Submit Button */}
-          <motion.button
+          {now <= deadlineTimestamp && <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             type="submit"
-            className={`w-full py-3 px-4 text-white font-semibold rounded-lg 
+            className={`w-full py-3 px-4 text-white font-semibold rounded-lg
               ${isSubmitting 
                 ? 'bg-blue-400 cursor-not-allowed' 
                 : 'bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 focus:ring-4 focus:ring-blue-300'
@@ -401,6 +403,7 @@ const RegisterForm: React.FC = () => {
           >
             {isSubmitting ? 'Registering...' : 'Register Now'}
           </motion.button>
+}
         </form>
 
         {/* Footer */}
