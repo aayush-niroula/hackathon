@@ -1,114 +1,6 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, { useState, useCallback, useMemo} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
-
-// Inline CountdownTimer component
-const CountdownTimer: React.FC<{ deadline: string }> = ({ deadline }) => {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  });
-  const [isExpired, setIsExpired] = useState(false);
-  const [isUrgent, setIsUrgent] = useState(false);
-
-  useEffect(() => {
-    const calculateTimeLeft = () => {
-      const difference = new Date(deadline).getTime() - new Date().getTime();
-
-      if (difference > 0) {
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((difference / 1000 / 60) % 60);
-        const seconds = Math.floor((difference / 1000) % 60);
-
-        // Check for urgency (less than 4 hours remaining)
-        const totalHoursLeft = days * 24 + hours;
-        setIsUrgent(totalHoursLeft < 4);
-
-        setTimeLeft({ days, hours, minutes, seconds });
-        setIsExpired(false);
-      } else {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        setIsExpired(true);
-      }
-    };
-
-    calculateTimeLeft();
-    const timer = setInterval(calculateTimeLeft, 1000);
-    return () => clearInterval(timer);
-  }, [deadline]);
-
-  if (isExpired) {
-    return (
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="text-center bg-red-500 text-white p-6 rounded-lg mb-6 animate-pulse"
-      >
-        <div className="text-2xl font-bold">Registration Closed</div>
-        <div className="text-sm mt-2">Time has expired. You can no longer register.</div>
-      </motion.div>
-    );
-  }
-
-  // Determine which time units to display
-  const displayUnits = timeLeft.days > 0 
-    ? ['days', 'hours', 'minutes', 'seconds'] 
-    : ['hours', 'minutes', 'seconds'];
-
-  return (
-    <AnimatePresence>
-      {isUrgent && (
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 text-center"
-        >
-          <div className="font-bold">⏰ Hurry! Registration is about to close</div>
-          <div className="text-sm mt-1">Don't miss your chance to participate!</div>
-        </motion.div>
-      )}
-      
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        className={`flex justify-center space-x-4 mb-6 ${isUrgent ? 'animate-pulse' : ''}`}
-      >
-        {displayUnits.map((unit) => (
-          <motion.div
-            key={unit}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            whileHover={{ scale: 1.05 }}
-            className={`
-              p-3 rounded-lg shadow-lg w-20 text-center transition-all duration-300
-              ${isUrgent 
-                ? 'bg-red-100 border-2 border-red-300 animate-pulse' 
-                : 'bg-blue-100 border border-blue-200'}
-            `}
-          >
-            <div className={`
-              text-3xl font-bold 
-              ${isUrgent ? 'text-red-700' : 'text-blue-700'}
-            `}>
-              {timeLeft[unit as keyof typeof timeLeft].toString().padStart(2, '0')}
-            </div>
-            <div className={`
-              text-xs uppercase 
-              ${isUrgent ? 'text-red-600' : 'text-blue-600'}
-            `}>
-              {unit}
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-    </AnimatePresence>
-  );
-};
-
 
 // Custom hook for form validation
 const useFormValidation = () => {
@@ -161,7 +53,7 @@ const useFormValidation = () => {
   }), [errors, validateForm]);
 };
 
-const RegisterForm: React.FC = () => {
+const AddUser: React.FC = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -218,23 +110,6 @@ const RegisterForm: React.FC = () => {
     }
   }, [formData, validateForm, setErrors]);
 
-  const deadline = '2024-12-17T20:00:00';
-
-    // New function to get a user-friendly deadline message
-    const getDeadlineMessage = () => {
-        const deadlineDate = new Date(deadline);
-        const options: Intl.DateTimeFormatOptions = { 
-          weekday: 'long', 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric', 
-          hour: '2-digit', 
-          minute: '2-digit', 
-        };
-        const formattedDate = deadlineDate.toLocaleString('en-US', options);
-        return `Register until ${formattedDate}`;
-      };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 
       flex items-center justify-center px-4 py-8">
@@ -249,23 +124,28 @@ const RegisterForm: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 text-center">
           <motion.img 
             src="/images.png" 
-            alt="Aims Code Quest 2.0" 
+            alt="User Registration" 
             className="mx-auto h-20 mb-4 rounded-lg shadow-lg"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
           />
-          <motion.h2 className="text-4xl font-extrabold tracking-tight">
-            Aims Code Quest 2.0
+          <motion.h2 
+            className="text-4xl font-extrabold tracking-tight"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            User Registration
           </motion.h2>
-          <motion.p className="text-sm text-blue-100 mt-2 italic">
-            "Unleash your potential through code!"
+          <motion.p 
+            className="text-sm text-blue-100 mt-2 italic"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            "Your journey starts here!"
           </motion.p>
-        </div>
-
-        {/* Countdown Timer */}
-        <CountdownTimer deadline={deadline} />
-
-        {/* Deadline Message */}
-        <div className="text-center text-sm text-gray-600 pb-2">
-          {getDeadlineMessage()}
         </div>
 
         {/* Form */}
@@ -399,17 +279,17 @@ const RegisterForm: React.FC = () => {
               } transition-all duration-300 shadow-lg`}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Registering...' : 'Register Now'}
+            {isSubmitting ? 'Submitting...' : 'Register'}
           </motion.button>
         </form>
 
         {/* Footer */}
         <div className="bg-gray-100 text-center py-4 text-sm text-gray-600 border-t border-gray-200">
-          Organized by <span className="font-semibold text-blue-600">CSIT 6th Semester Students</span>
+          Organized by <span className="font-semibold text-blue-600">CSIT 2078 Batch</span>
         </div>
       </motion.div>
     </div>
   );
 };
 
-export default RegisterForm;
+export default AddUser;

@@ -36,6 +36,13 @@ const ADMIN_ROUTES = [
     bgColor: 'bg-purple-600',
   },
   { 
+    title: 'Add User', 
+    path: '/admin/adduser', 
+    icon: Clock,
+    description: 'Adding User',
+    bgColor: 'bg-slate-950',
+  },
+  { 
     title: 'View Users', 
     path: '/admin/viewuser', 
     icon: Users,
