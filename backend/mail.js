@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import mongoose from 'mongoose';
-import { User } from './model/user.model';
+import { User } from './model/user.model.js';
 
 const generateEmailTemplate = () => {
   return `
@@ -19,7 +19,7 @@ const generateEmailTemplate = () => {
         We are excited to have you join us for this thrilling coding experience. Prepare to code, compete, and collaborate! 
       </p>
       <p style="font-size: 16px; color: #555;"> 
-        Additionally, we invite you to the <strong>Poush 5 Demo and Presentation</strong> on the following day: 
+        There will also be a <strong>Demo and Presentation</strong> session the following day:
         <br> 📅 <strong>Date:</strong> Poush 5
         <br> 🕒 <strong>Time:</strong> 8:30 AM 
       </p>
@@ -29,29 +29,30 @@ const generateEmailTemplate = () => {
       <hr style="border: none; border-top: 1px solid #ddd; margin-top: 30px;"> 
       <p style="font-size: 12px; color: #999; text-align: center;"> 
         This email was sent by Aims Code Quest 2.0. For any inquiries, contact us at 
-        <a href="mailto:support@aimscodequest.com">support@aimscodequest.com</a>. 
+        <a href="mailto:karki.aayush2003@gmail.com">support@aimscodequest.com</a>. 
       </p>
     </div>
   `;
 };
 
+// Configure Nodemailer
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: process.env.EMAIL_USER, // Your email
-    pass: process.env.EMAIL_PASS, // Your app password or email password
+    user: 'karki.aayush2003@gmail.com',
+    pass: 'bbbb ljdi nsgr oueo',
   },
 });
 
 const sendThankYouEmails = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    // Connect to MongoDB
+    await mongoose.connect("mongodb+srv://aayushniroula645:aayush@cluster0.0wgoj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", { dbName: 'hackathon' });
+    console.log('MongoDB connected successfully.');
 
-    const users = await User.find().select('email');
-    if (!users.length) {
-      console.log('No users found.');
-      return;
-    }
+    // Fetch users who have not received the email
+    const users = await User.find({ emailSent: { $ne: true } });
+    console.log(`Fetched ${users.length} unsent users from the database.`);
 
     for (const user of users) {
       const mailOptions = {
@@ -62,7 +63,7 @@ const sendThankYouEmails = async () => {
         attachments: [
           {
             filename: 'images.png',
-            path: '/images.png', // Path to your logo image
+            path: './images.png', // Path to your logo image
             cid: 'logo', // Content ID referenced in the email template
           },
         ],
@@ -70,19 +71,25 @@ const sendThankYouEmails = async () => {
 
       try {
         await transporter.sendMail(mailOptions);
-        console.log(`Email sent to: ${user.email}`);
+        console.log(`✅ Email sent to: ${user.email}`);
+
+        // Update the emailSent field to true
+        await User.updateOne({ _id: user._id }, { emailSent: true });
       } catch (emailError) {
-        console.error(`Failed to send email to ${user.email}:`, emailError.message);
+        console.error(`❌ Failed to send email to ${user.email}:`, emailError.message);
       }
     }
 
-    console.log('All emails processed.');
+    console.log('✅ All emails processed.');
   } catch (err) {
-    console.error('Error:', err.message);
+    console.error('❌ Error occurred:', err.message);
   } finally {
+    // Disconnect from MongoDB
     await mongoose.disconnect();
-    console.log('Disconnected from MongoDB');
+    console.log('Disconnected from MongoDB.');
   }
 };
 
+
+// Start the email process
 sendThankYouEmails();

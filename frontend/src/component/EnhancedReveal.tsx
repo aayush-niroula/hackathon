@@ -111,60 +111,58 @@ const EnhancedRevealTeams = () => {
     const animateShuffling = () => {
       if (currentStage < shufflingStages.length) {
         const stage = shufflingStages[currentStage];
-        
-        const shuffledParticipants = shufflingCopy.sort(() => 
+    
+        const shuffledParticipants = shufflingCopy.sort(() =>
           Math.random() < stage.intensity ? -1 : 1
         );
-        
+    
         setShufflingParticipants([...shuffledParticipants]);
         setShuffleStage(currentStage + 1);
-        
+    
         currentStage++;
         setTimeout(animateShuffling, stage.duration);
       } else {
-        setTimeout(formFinalTeams, 500);
+        // Instead of waiting 500ms, ensure final team formation begins after all stages
+        setIsShuffling(false);  // Add this to stop the shuffling animation
+        setTimeout(() => formFinalTeams(shufflingCopy), 500);  // Delay to ensure the shuffling is complete
       }
     };
+    
 
     setTimeout(animateShuffling, 300);
   };
 
-  const formFinalTeams = () => {
-    function shuffleArray<T>(array: T[]): T[] {
+  const formFinalTeams = (shufflingCopy: Participant[]) => {
+    const shuffleArray = <T,>(array: T[]): T[] => {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
       }
       return array;
-    }
+    };
 
-    // Separate participants by semester
-    const participantsBySemester = participants.reduce<{
+    const participantsBySemester = shufflingCopy.reduce<{
       First: Participant[];
       Third: Participant[];
-    }>((acc, participant) => {
-      acc[participant.semester].push(participant);
-      return acc;
-    }, { First: [], Third: [] });
+    }>(
+      (acc, participant) => {
+        acc[participant.semester].push(participant);
+        return acc;
+      },
+      { First: [], Third: [] }
+    );
 
     const firstSemester = shuffleArray(participantsBySemester.First);
     const thirdSemester = shuffleArray(participantsBySemester.Third);
 
-    const shuffledTeams: Team[] = [];
+    const teams: Team[] = [];
     const remainingParticipants: Participant[] = [];
 
-    const totalFirstSemester = firstSemester.length;
-    const totalThirdSemester = thirdSemester.length;
-
-    let maxTeams = Math.min(
-      Math.floor(totalFirstSemester / 2), 
-      Math.floor(totalThirdSemester / 2)
-    );
-
-    // Create balanced teams of 4 members (2 First, 2 Third per team)
-    for (let i = 0; i < maxTeams; i++) {
-      shuffledTeams.push({
-        id: i + 1,
+    // Step 1: Form balanced teams of 4 members (2 First + 2 Third)
+    let teamId = 1;
+    while (firstSemester.length >= 2 && thirdSemester.length >= 2) {
+      teams.push({
+        id: teamId++,
         members: [
           firstSemester.pop()!,
           firstSemester.pop()!,
@@ -176,34 +174,39 @@ const EnhancedRevealTeams = () => {
 
     remainingParticipants.push(...firstSemester, ...thirdSemester);
 
-    // Distribute remaining participants
-    while (remainingParticipants.length > 0) {
-      const participant = remainingParticipants.pop()!;
-
-      const teamWithFewestMembers = shuffledTeams.sort(
-        (a, b) => a.members.length - b.members.length
-      )[0];
-
-      if (teamWithFewestMembers.members.length < 4) {
-        teamWithFewestMembers.members.push(participant);
-      } else {
-        shuffledTeams.push({
-          id: shuffledTeams.length + 1,
-          members: [participant],
-        });
-      }
+    // Step 2: Form teams of 3 members if possible
+    while (remainingParticipants.length >= 3) {
+      teams.push({
+        id: teamId++,
+        members: [
+          remainingParticipants.pop()!,
+          remainingParticipants.pop()!,
+          remainingParticipants.pop()!,
+        ],
+      });
     }
 
-    // Reset shuffling state and show final teams
-    setTeams(shuffledTeams);
+    // Step 3: Distribute remaining participants to avoid teams of 2
+    if (remainingParticipants.length === 2) {
+      const participant1 = remainingParticipants.pop()!;
+      const participant2 = remainingParticipants.pop()!;
+      teams.sort((a, b) => a.members.length - b.members.length);
+      teams[0].members.push(participant1);
+      teams[1].members.push(participant2);
+    } else if (remainingParticipants.length === 1) {
+      const participant = remainingParticipants.pop()!;
+      teams.sort((a, b) => a.members.length - b.members.length);
+      teams[0].members.push(participant);
+    }
+
+    // Finalize the state
+    setTeams(teams);
     setShufflingParticipants([]);
-    
-    // Play final success sound
-    playSound(finalAudioRef);
-    
+    // playSuccess();
     setShowConfetti(true);
     setIsShuffling(false);
-    teamsRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+    teamsRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const teamStats = useMemo(() => {
