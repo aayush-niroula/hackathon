@@ -455,8 +455,6 @@ Save Teams
 </div>
 )}
 
-1
-2
   </motion.div>
 </div>
 );
