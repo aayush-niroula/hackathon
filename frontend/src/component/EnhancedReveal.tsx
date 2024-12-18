@@ -440,7 +440,7 @@ className="relative bg-gradient-to-br from-gray-900 to-gray-700 shadow-2xl round
 </AnimatePresence>
 )}
 
-1
+
 {/* Save Teams Button */}
 {teams.length > 0 && (
 <div className="mt-8 flex justify-center">
